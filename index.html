@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trakelles Hair | Το στυλ που σου ταιριάζει</title>
+  <meta name="description" content="Trakelles Hair στη Λέσβο. Premium κομμωτήριο με ανδρικές και γυναικείες περιποιήσεις, video gallery, 3 καταστήματα και τηλεφωνικά ραντεβού." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================================================
+       TRAKELLES HAIR - PREMIUM ONE PAGE WEBSITE
+       Οργάνωση: μεταβλητές, sections, gallery, social, responsive, JavaScript
+       Σημείωση: Η λειτουργία του site δεν αλλάζει — προστέθηκαν σχόλια και premium social cards.
+    ===================================================== */
+
+    /* 1. Χρωματική παλέτα / μεταβλητές */
+    :root{
+      --bg:#080808;
+      --bg2:#111;
+      --gold:#d4af37;
+      --gold2:#f3d77b;
+      --text:#f6f1e8;
+      --muted:#bdb5a8;
+      --line:rgba(212,175,55,.25);
+      --card:rgba(255,255,255,.055);
+    }
+
+    /* 2. Reset & βασικές ρυθμίσεις */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:Manrope,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+    body.no-scroll{overflow:hidden}
+    a{text-decoration:none;color:inherit}
+    img,video{max-width:100%;display:block}
+
+    /* 3. Διακριτικός cinematic φωτισμός background */
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 10%,rgba(212,175,55,.12),transparent 32%),
+        radial-gradient(circle at 80% 30%,rgba(255,255,255,.06),transparent 30%);
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    /* 4. Navbar */
+    .nav{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      z-index:50;
+      padding:18px 7%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:linear-gradient(to bottom,rgba(0,0,0,.78),rgba(0,0,0,.22));
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      transition:.35s;
+    }
+
+    .nav.scrolled{padding:13px 7%;background:rgba(0,0,0,.9)}
+
+    .logo{
+      font-family:'Cormorant Garamond',serif;
+      font-size:31px;
+      letter-spacing:2px;
+      color:var(--gold2);
+      line-height:1;
+      white-space:nowrap;
+      text-transform:uppercase;
+    }
+
+    .links{display:flex;gap:22px;align-items:center;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+    .links a{color:#ddd;transition:.3s;white-space:nowrap}
+    .links a:hover{color:var(--gold2)}
+
+    .lang-switch{display:flex;gap:6px;align-items:center;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.045);border-radius:999px;padding:5px}
+    .lang-switch button{border:0;background:transparent;color:#ddd;padding:8px 10px;border-radius:999px;cursor:pointer;font-weight:900;letter-spacing:.8px}
+    .lang-switch button.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#111}
+
+    .hamb{display:none;background:none;border:0;color:var(--gold2);font-size:32px;cursor:pointer;z-index:55}
+    .mobile-actions{display:none;align-items:center;gap:10px}
+
+    /* 5. Hero section */
+    .hero{
+      min-height:100vh;
+      position:relative;
+      display:flex;
+      align-items:center;
+      padding:120px 7% 70px;
+      overflow:hidden;
+      isolation:isolate;
+    }
+
+    .hero-bg{
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.93) 0%,rgba(0,0,0,.64) 45%,rgba(0,0,0,.33)),
+        url('Images/hero.png') center/cover no-repeat;
+      transform:scale(1.08);
+      animation:heroZoom 18s ease-in-out infinite alternate;
+      z-index:-2;
+    }
+
+    .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg),transparent 35%);pointer-events:none;z-index:-1}
+    @keyframes heroZoom{from{transform:scale(1.08) translateX(0)}to{transform:scale(1.18) translateX(-18px)}}
+
+    .hero-content{position:relative;z-index:2;max-width:780px}
+    .eyebrow{color:var(--gold2);letter-spacing:5px;text-transform:uppercase;font-size:12px;font-weight:900;margin-bottom:18px}
+    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(54px,8vw,118px);line-height:.88;margin-bottom:22px;text-transform:uppercase}
+    .hero h1 span{color:var(--gold2)}
+    .hero p{font-size:clamp(17px,2vw,24px);color:#eee;line-height:1.7;max-width:700px}
+    .actions{display:flex;gap:16px;flex-wrap:wrap;margin-top:34px}
+
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:15px 24px;border-radius:999px;font-weight:900;letter-spacing:.8px;transition:.35s;border:0;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#111}
+    .btn.primary:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(212,175,55,.25)}
+    .btn.ghost{border:1px solid rgba(255,255,255,.22);color:#fff;background:transparent}
+    .btn.ghost:hover{border-color:var(--gold);color:var(--gold2)}
+
+    /* 6. Γενικά styles για sections */
+    section{padding:105px 7%}
+    .section-head{max-width:860px;margin-bottom:50px}
+    .tag{color:var(--gold2);font-size:12px;font-weight:900;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px}
+    .section-head h2{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5vw,72px);line-height:1}
+    .section-head p{color:var(--muted);font-size:17px;line-height:1.8;margin-top:18px}
+
+    /* 7. Services */
+    .service-categories{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+    .category-card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:34px;position:relative;overflow:hidden}
+    .category-card:before{content:"";position:absolute;right:-100px;bottom:-120px;width:240px;height:240px;background:radial-gradient(circle,rgba(212,175,55,.2),transparent 68%)}
+    .category-card h3{font-family:'Cormorant Garamond',serif;font-size:42px;color:var(--gold2);margin-bottom:24px;position:relative}
+    .service-list{display:grid;gap:14px;position:relative}
+    .service-item{padding:16px;border-radius:18px;background:rgba(0,0,0,.23);border:1px solid rgba(255,255,255,.08);color:#ddd;font-weight:700;line-height:1.4;transition:.35s}
+    .service-item:hover{border-color:var(--line);transform:translateY(-4px);color:#fff}
+
+    /* 8. Meet Nikos / About section */
+    .about{display:grid;grid-template-columns:.88fr 1.12fr;gap:60px;align-items:center;background:linear-gradient(135deg,#050505,#111)}
+    .portrait{border-radius:32px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 90px rgba(0,0,0,.55)}
+    .portrait img{width:100%;height:100%;object-fit:cover;transition:.7s}
+    .portrait:hover img{transform:scale(1.04)}
+    .about-text h2{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,5vw,78px);line-height:.95;margin-bottom:24px}
+    .about-text h2 span{color:var(--gold2)}
+    .about-text p{color:#d8d0c3;line-height:1.9;font-size:17px}
+    .signature{margin-top:26px;font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--gold2)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+    .stat{padding:20px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.04)}
+    .stat b{display:block;color:var(--gold2);font-size:30px}
+    .stat small{color:var(--muted)}
+
+
+    /* 8B. Meet the Team - δύο premium κάρτες stylists */
+    .team-section{
+      background:linear-gradient(135deg,#050505,#111);
+    }
+
+    .team-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:28px;
+      align-items:stretch;
+    }
+
+    .team-card{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:28px;
+      align-items:center;
+      padding:28px;
+      border-radius:32px;
+      border:1px solid rgba(212,175,55,.22);
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.032)),
+        radial-gradient(circle at 86% 12%,rgba(212,175,55,.14),transparent 38%);
+      box-shadow:0 30px 90px rgba(0,0,0,.35);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .team-card::before{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius:31px;
+      border:1px solid rgba(255,255,255,.045);
+      pointer-events:none;
+    }
+
+    .team-card .portrait{
+      height:100%;
+      min-height:360px;
+      border-radius:24px;
+    }
+
+    .team-card .team-text{
+      position:relative;
+      z-index:2;
+    }
+
+    .team-card h3{
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(38px,4vw,58px);
+      line-height:.95;
+      margin-bottom:18px;
+    }
+
+    .team-card h3 span{color:var(--gold2)}
+
+    .team-card p{
+      color:#d8d0c3;
+      line-height:1.85;
+      font-size:16px;
+    }
+
+    .team-role{
+      margin-top:20px;
+      color:var(--muted);
+      font-weight:800;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+
+
+    /* 9. Video Gallery - TikTok/Reels αναλογία 9:16 */
+    .video-gallery{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:24px;
+      align-items:start;
+    }
+    .video-card{
+      width:100%;
+      aspect-ratio:9/16;
+      position:relative;
+      overflow:hidden;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.08);
+      background:#111;
+      cursor:pointer;
+      isolation:isolate;
+      box-shadow:0 18px 55px rgba(0,0,0,.35);
+    }
+    .video-card.wide,.video-card.tall{grid-column:auto;grid-row:auto}
+    .video-card video{width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.05);transition:.65s;background:#111}
+    .video-card:hover video{transform:scale(1.06)}
+    .video-card:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.76),rgba(0,0,0,.06) 55%,rgba(0,0,0,.25));z-index:1}
+    .play-icon{position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.65);border:1px solid rgba(212,175,55,.35);color:var(--gold2);z-index:3;backdrop-filter:blur(12px);font-weight:900}
+    .video-label{position:absolute;left:18px;bottom:18px;z-index:3;display:grid;gap:7px}
+    .video-label span{width:max-content;padding:9px 14px;border-radius:999px;background:rgba(0,0,0,.62);border:1px solid rgba(212,175,55,.28);color:var(--gold2);font-weight:900;font-size:13px;backdrop-filter:blur(10px)}
+    .video-label small{color:#eee;font-weight:800;letter-spacing:.4px;text-shadow:0 8px 24px rgba(0,0,0,.6)}
+
+    /* 10. Locations / Reviews / Social grid */
+    .locations,.reviews,.social-wall{display:grid;gap:18px;grid-template-columns:repeat(3,1fr)}
+    .location-card,.review,.social-card{border-radius:24px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08)}
+    .location-card{padding:28px}
+    .location-card h3,.social-card h3{font-family:'Cormorant Garamond',serif;color:var(--gold2)}
+    .location-card h3{font-size:34px;margin-bottom:10px}
+    .location-card p,.social-card p{color:var(--muted);line-height:1.7}
+    .review{padding:28px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035))}
+    .stars{color:var(--gold2);letter-spacing:3px;margin-bottom:18px}
+    .review p{color:#eee;line-height:1.8}
+    .review b{display:block;margin-top:18px;color:var(--muted)}
+    /* 11. Premium Social Cards
+       Κάθε social card είναι ολόκληρο clickable.
+       Καθαρό αποτέλεσμα: μόνο το όνομα του social, χωρίς περιγραφές και χωρίς extra κουμπιά. */
+   /* ===========================
+   PREMIUM SOCIAL CARDS
+=========================== */
+
+.social-wall{
+    display:flex;
+    justify-content:flex-start;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-top:35px;
+}
+.social-card{
+    width:210px;
+    height:120px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+    overflow:hidden;
+    isolation:isolate;
+
+    border-radius:16px;
+    border:1px solid rgba(212,175,55,.18);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.06),
+            rgba(255,255,255,.025)
+        ),
+        radial-gradient(
+            circle at 82% 15%,
+            rgba(212,175,55,.14),
+            transparent 45%
+        ),
+        rgba(255,255,255,.04);
+
+    transition:.35s;
+}
+
+.social-card::before{
+    content:"";
+    position:absolute;
+    inset:1px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.04);
+}
+
+.social-card::after{
+    content:"";
+    position:absolute;
+    width:110px;
+    height:110px;
+    top:-40px;
+    right:-40px;
+
+    background:radial-gradient(
+        circle,
+        rgba(212,175,55,.16),
+        transparent 70%
+    );
+
+    transition:.35s;
+}
+
+.social-card:hover{
+    transform:translateY(-5px);
+
+    border-color:rgba(243,215,123,.45);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.35),
+        0 0 15px rgba(212,175,55,.08);
+}
+
+.social-card:hover::after{
+    transform:scale(1.15);
+}
+
+.social-card .social-big{
+
+    font-family:'Cormorant Garamond',serif;
+
+    font-size:28px;
+
+    letter-spacing:1.5px;
+
+    color:var(--gold2);
+
+    text-transform:uppercase;
+
+    position:relative;
+
+    z-index:2;
+
+    transition:.3s;
+
+}
+
+.social-card .social-big::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:-8px;
+
+    width:22px;
+
+    height:1px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        var(--gold2),
+        transparent
+    );
+
+    transform:translateX(-50%);
+
+    transition:.3s;
+
+}
+
+.social-card:hover .social-big{
+
+    color:#fff4c5;
+
+    transform:translateY(-2px);
+
+}
+
+.social-card:hover .social-big::after{
+
+    width:60%;
+
+}
+
+    /* 12. Contact & Google Maps */
+    .contact{background:linear-gradient(135deg,rgba(212,175,55,.09),transparent 45%),#070707}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .contact-card,.map{border-radius:28px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);overflow:hidden}
+    .contact-card{padding:36px}
+    .contact-card h3{font-family:'Cormorant Garamond',serif;font-size:46px;margin-bottom:22px}
+    .info{display:grid;gap:18px;color:#ddd;line-height:1.6}
+    .socials{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+    .socials a{padding:12px 16px;border-radius:999px;background:#111;border:1px solid rgba(255,255,255,.1);color:var(--gold2);font-weight:900}
+    .map iframe{width:100%;height:100%;min-height:390px;border:0;filter:grayscale(1) invert(.9) contrast(.9)}
+
+    /* 13. Video modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:26px;backdrop-filter:blur(12px)}
+    .modal.open{display:flex}
+    .modal-box{width:min(430px,100%);max-height:92vh;position:relative;border-radius:26px;overflow:hidden;border:1px solid rgba(212,175,55,.28);box-shadow:0 40px 100px rgba(0,0,0,.75);background:#000}
+    .modal video{width:100%;max-height:92vh;aspect-ratio:9/16;object-fit:contain;background:#000}
+    .modal-close{position:absolute;top:14px;right:14px;z-index:5;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.72);color:#fff;font-size:26px;cursor:pointer;display:grid;place-items:center}
+
+    /* 15. Footer & floating call button */
+    footer{padding:28px 7%;border-top:1px solid rgba(255,255,255,.08);color:var(--muted);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:14px}
+    .float-call{position:fixed;right:22px;bottom:22px;z-index:45;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#111;padding:15px 20px;border-radius:999px;font-weight:900;box-shadow:0 18px 45px rgba(0,0,0,.35)}
+    .reveal{opacity:0;transform:translateY(35px);transition:1s ease}
+    .reveal.active{opacity:1;transform:none}
+
+    /* 16. Responsive layout */
+    @media(max-width:1050px){
+      .video-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+      .service-categories,.contact-grid,.about{grid-template-columns:1fr}
+      .team-grid{grid-template-columns:1fr}
+      .locations,.reviews,.social-wall{grid-template-columns:1fr}
+    }
+
+    @media(max-width:900px){
+      .mobile-actions{display:flex}
+      .nav{padding:14px 6%}
+      .nav.scrolled{padding:12px 6%}
+      .logo{font-size:23px}
+      .hamb{display:block}
+      .nav > .lang-switch{display:none}
+      .links{position:fixed;top:66px;left:6%;right:6%;display:none;flex-direction:column;align-items:flex-start;background:rgba(0,0,0,.96);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+      .links.open{display:flex}
+      .links .mobile-lang{display:flex;width:100%;justify-content:flex-start}
+      .hero{min-height:92vh;padding:118px 6% 70px}
+      section{padding:78px 6%}
+      .stats{grid-template-columns:1fr}
+      .team-card{grid-template-columns:1fr;padding:22px}
+      .team-card .portrait{min-height:320px}
+      .video-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+      .video-card{border-radius:20px}
+      .float-call{left:18px;right:18px;text-align:center;justify-content:center}
+    }
+
+
+    @media(max-width:480px){
+      .video-gallery{grid-template-columns:1fr;max-width:330px;margin-inline:auto;gap:22px}
+      .video-card{border-radius:22px}
+      .video-label span{font-size:12px}
+    }
+
+    @media(min-width:901px){.mobile-lang{display:none!important}}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <a class="logo" href="#top">Trakelles Hair</a>
+
+    <div class="links">
+      <a href="#services" data-i18n="navServices">Υπηρεσίες</a>
+      <a href="#gallery" data-i18n="navGallery">Gallery</a>
+      <a href="#locations" data-i18n="navLocations">Καταστήματα</a>
+      <a href="#social" data-i18n="navSocial">Social</a>
+      <a href="#contact" data-i18n="navContact">Επικοινωνία</a>
+      <div class="lang-switch mobile-lang">
+        <button class="lang-btn active" data-set-lang="el">GR</button>
+        <button class="lang-btn" data-set-lang="en">EN</button>
+      </div>
+    </div>
+
+    <div class="lang-switch">
+      <button class="lang-btn active" data-set-lang="el">GR</button>
+      <button class="lang-btn" data-set-lang="en">EN</button>
+    </div>
+
+    <button class="hamb" aria-label="Άνοιγμα μενού">☰</button>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="hero" id="top">
+    <div class="hero-bg"></div>
+    <div class="hero-content reveal">
+      <div class="eyebrow" data-i18n="heroEyebrow">Premium Hair Experience</div>
+      <h1>Trakelles <span>Hair</span></h1>
+      <p data-i18n="heroText">Το στυλ που σου ταιριάζει. Ανδρικές και γυναικείες περιποιήσεις, σύγχρονο χρώμα, premium τεχνικές και προσωπική φροντίδα σε 3 καταστήματα στη Λέσβο.</p>
+      <div class="actions">
+        <a class="btn primary" href="tel:6944020119" data-i18n="bookBtn">Κλείσε Ραντεβού</a>
+        <a class="btn ghost" href="#gallery" data-i18n="galleryBtn">Δες Gallery</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SERVICES SECTION -->
+  <section id="services">
+    <div class="section-head reveal">
+      <div class="tag">Services</div>
+      <h2 data-i18n="servicesTitle">Περιποιήσεις με premium χαρακτήρα</h2>
+      <p data-i18n="servicesText">Οι υπηρεσίες είναι χωρισμένες σε ανδρικές και γυναικείες περιποιήσεις, χωρίς ξεχωριστό κοινό τμήμα, για να φαίνονται καθαρές και επαγγελματικές.</p>
+    </div>
+
+    <div class="service-categories">
+      <div class="category-card reveal">
+        <h3 data-i18n="menCare">Περιποιήσεις Ανδρών</h3>
+        <div class="service-list">
+          <div class="service-item" data-i18n="men1">✂️ Ανδρικό Κούρεμα</div>
+          <div class="service-item" data-i18n="men2">🧔 Περιποίηση Γενειάδας</div>
+          <div class="service-item" data-i18n="men3">🖤 Black Mask</div>
+          <div class="service-item" data-i18n="men4">👦 Παιδικό Κούρεμα</div>
+          <div class="service-item" data-i18n="men5">⚡ Hair Design / Σχέδια</div>
+          <div class="service-item" data-i18n="men6">👀 Βγάλσιμο / Σχηματισμός Φρυδιών</div>
+        </div>
+      </div>
+
+      <div class="category-card reveal">
+        <h3 data-i18n="womenCare">Περιποιήσεις Γυναικών</h3>
+        <div class="service-list">
+          <div class="service-item" data-i18n="women1">💇‍♀️ Γυναικείο Κούρεμα</div>
+          <div class="service-item" data-i18n="women2">🎨 Βαφές</div>
+          <div class="service-item" data-i18n="women3">✨ Permanent</div>
+          <div class="service-item" data-i18n="women4">🌟 Balayage</div>
+          <div class="service-item" data-i18n="women5">💁 Extensions</div>
+          <div class="service-item" data-i18n="women11">💍 Extensions Ring</div>
+          <div class="service-item" data-i18n="women12">🔗 Nano Ring Extensions</div>
+          <div class="service-item" data-i18n="women13">🪡 Τρέσες</div>
+          <div class="service-item" data-i18n="women6">🧪 Θεραπεία Olaplex</div>
+          <div class="service-item" data-i18n="women7">💎 Κερατίνες</div>
+          <div class="service-item" data-i18n="women8">💁‍♀️ Braids Braids</div>
+          <div class="service-item" data-i18n="women9">👰 Χτένισμα γάμου</div>
+          <div class="service-item" data-i18n="women14">💃 Χτενίσματα Κοινωνικών Εκδηλώσεων</div>
+          <div class="service-item" data-i18n="women10">👀 Βγάλσιμο / Σχηματισμός Φρυδιών</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEET THE TEAM SECTION -->
+  <section class="team-section" id="about">
+    <div class="section-head reveal">
+      <div class="tag">Meet the Team</div>
+      <h2 data-i18n="teamTitle">Οι άνθρωποι πίσω από το στυλ σου</h2>
+      <p data-i18n="teamText">Η ομάδα του Trakelles Hair συνδυάζει τεχνική, εμπειρία και προσωπική φροντίδα, ώστε κάθε αποτέλεσμα να ταιριάζει πραγματικά στον άνθρωπο που το φοράει.</p>
+    </div>
+
+    <div class="team-grid">
+      <article class="team-card reveal">
+        <div class="portrait">
+          <img src="Images/Nikos.JPG" alt="Νίκος Τρακέλλης">
+        </div>
+        <div class="team-text">
+          <h3 data-i18n="nikosTitle">Νίκος <span>Τρακέλλης</span></h3>
+          <p data-i18n="nikosText">Η κομμωτική είναι κάτι περισσότερο από ένα κούρεμα. Είναι ο τρόπος που παρουσιάζεις τον εαυτό σου κάθε μέρα. Στο Trakelles Hair, κάθε υπηρεσία προσαρμόζεται στο πρόσωπο, το στυλ και τις ανάγκες του κάθε πελάτη.</p>
+          <div class="signature">Nikos Trakelles</div>
+          <div class="team-role">Hair Stylist</div>
+        </div>
+      </article>
+
+      <article class="team-card reveal">
+        <div class="portrait">
+          <img src="Images/Anna.JPG" alt="Άννα Μαμουλλελή">
+        </div>
+        <div class="team-text">
+          <h3 data-i18n="annaTitle">Άννα <span>Μαμουλλελή</span></h3>
+          <p data-i18n="annaText">Η Άννα Μαμουλλελή αποτελεί μέλος της ομάδας του Trakelles Hair, προσφέροντας υπηρεσίες με συνέπεια, δημιουργικότητα και ιδιαίτερη προσοχή στη λεπτομέρεια. Με σύγχρονες τεχνικές και προσωπική προσέγγιση, στόχος της είναι κάθε πελάτης να φεύγει με ένα αποτέλεσμα που αναδεικνύει το προσωπικό του στυλ και χαρίζει αυτοπεποίθηση.</p>
+          <div class="signature">Anna Mamouleli</div>
+          <div class="team-role">Hair Stylist</div>
+        </div>
+      </article>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat"><b>4.9★</b><small data-i18n="ratingSmall">Google Rating</small></div>
+      <div class="stat"><b>82+</b><small data-i18n="reviewsSmall">Κριτικές</small></div>
+      <div class="stat"><b>3</b><small data-i18n="locationsSmall">Καταστήματα στη Λέσβο</small></div>
+    </div>
+  </section>
+
+  <!-- VIDEO GALLERY SECTION -->
+  <section id="gallery">
+    <div class="section-head reveal">
+      <div class="tag">Video Gallery</div>
+      <h2>Gallery</h2>
+      <p data-i18n="galleryText"></p>
+    </div>
+
+    <div class="video-gallery">
+      <article class="video-card reveal" data-video="videos/balayase_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/balayase_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Balayage</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/black_slowmo_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/black_slowmo_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Black Hair</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/blonde_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/blonde_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Blonde Hair</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/drawing_hair_kids_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/drawing_hair_kids_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Kids Hair Design</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/grey_hair_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/grey_hair_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Grey Look</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/lightred_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/lightred_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Copper Look</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/mulet_men_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/mulet_men_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Mullet</span></div>
+      </article>
+
+      <article class="video-card reveal" data-video="videos/short_fade_men_insta.mp4">
+        <video muted playsinline preload="metadata"><source src="videos/short_fade_men_insta.mp4" type="video/mp4"></video>
+        <div class="play-icon">▶</div>
+        <div class="video-label"><span>Short Fade</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- LOCATIONS SECTION -->
+  <section id="locations">
+    <div class="section-head reveal">
+      <div class="tag">Locations</div>
+      <h2 data-i18n="locationsTitle">Τα καταστήματά μας</h2>
+      <p data-i18n="locationsText">Το Trakelles Hair εξυπηρετεί σε τρία σημεία στη Λέσβο.</p>
+    </div>
+    <div class="locations">
+      <div class="location-card reveal"><h3>Μυτιλήνη</h3><p>Ζωοδόχου Πηγής 164Β, Μυτιλήνη</p></div>
+      <div class="location-card reveal"><h3>Μόρια Λέσβου</h3><p>Trakelles Hair Salon</p></div>
+      <div class="location-card reveal"><h3>Πολιχνίτος Λέσβου</h3><p>Trakelles Hair Salon</p></div>
+    </div>
+  </section>
+
+  <!-- REVIEWS SECTION -->
+  <section id="reviews">
+    <div class="section-head reveal">
+      <div class="tag">Reviews</div>
+      <h2 data-i18n="reviewsTitle">Τι λένε οι πελάτες</h2>
+    </div>
+    <div class="reviews">
+      <div class="review reveal"><div class="stars">★★★★★</div><p data-i18n="review1">«ΦΟΒΕΡΟΣ και λίγα λέω, επαγγελματίας με τα όλα του. Έχω μείνει ικανοποιημένη φουλ.»</p><b>Google Review</b></div>
+      <div class="review reveal"><div class="stars">★★★★★</div><p data-i18n="review2">«Ο άνθρωπος είναι επαγγελματίας και γρήγορος. Έχει άποψη και γνώση στον τομέα του.»</p><b>Google Review</b></div>
+      <div class="review reveal"><div class="stars">★★★★★</div><p data-i18n="review3">«Καταπληκτική δουλειά. Ήμουν πολύ ευχαριστημένη και δεν μου έφυγε καθόλου μήκος.»</p><b>Google Review</b></div>
+    </div>
+  </section>
+
+  <!-- SOCIAL SECTION -->
+  <section id="social">
+    <div class="section-head reveal">
+      <div class="tag">Social Feed</div>
+      <h2 data-i18n="socialTitle">Μην χάσεις συμβουλές & νέες δουλειές</h2>
+      <p data-i18n="socialText">Ακολούθησε το Trakelles Hair για συμβουλές περιποίησης, νέες τάσεις, πριν/μετά αποτελέσματα και στιγμές από τα καταστήματα.</p>
+    </div>
+
+    <div class="social-wall">
+      <!-- Ολόκληρη η κάρτα οδηγεί στο Instagram -->
+      <a class="social-card reveal" href="https://www.instagram.com/trakelles_extreme_hair_styling/" target="_blank" rel="noopener" aria-label="Instagram Trakelles Hair">
+        <span class="social-big">Instagram</span>
+      </a>
+
+      <!-- Ολόκληρη η κάρτα οδηγεί στο TikTok -->
+      <a class="social-card reveal" href="https://www.tiktok.com/@nick_trakelles" target="_blank" rel="noopener" aria-label="TikTok Trakelles Hair">
+        <span class="social-big">TikTok</span>
+      </a>
+
+      <!-- Ολόκληρη η κάρτα οδηγεί στο Facebook -->
+      <a class="social-card reveal" href="https://www.facebook.com/profile.php?id=100009493850088" target="_blank" rel="noopener" aria-label="Facebook Trakelles Hair">
+        <span class="social-big">Facebook</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section class="contact" id="contact">
+    <div class="section-head reveal">
+      <div class="tag">Book your appointment</div>
+      <h2 data-i18n="contactTitle">Κλείσε το ραντεβού σου</h2>
+      <p data-i18n="contactText">Το ραντεβού γίνεται τηλεφωνικά. Κάλεσε για διαθεσιμότητα και πληροφορίες.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card reveal">
+        <h3>Trakelles Hair</h3>
+        <div class="info">
+          <p>📍 Ζωοδόχου Πηγής 164Β, Μυτιλήνη 811 00</p>
+          <p>📍 Μόρια Λέσβου</p>
+          <p>📍 Πολιχνίτος Λέσβου</p>
+          <p>📞 <a href="tel:6944020119">694 402 0119</a></p>
+          <p>📞 <a href="tel:6971832034">697 1832 034</a></p>
+        </div>
+        <div class="socials">
+          <a href="https://www.facebook.com/profile.php?id=100009493850088" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.instagram.com/trakelles_extreme_hair_styling/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.tiktok.com/@nick_trakelles" target="_blank" rel="noopener">TikTok</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=Trakelles+Hair+Ζωοδόχου+Πηγής+164Β+Μυτιλήνη" target="_blank" rel="noopener">Google Maps</a>
+        </div>
+      </div>
+      <div class="map reveal"><iframe loading="lazy" src="https://www.google.com/maps?q=Ζωοδόχου%20Πηγής%20164Β%20Μυτιλήνη&output=embed"></iframe></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer><p>© 2026 Trakelles Hair · Designed by Skout Studio</p></footer>
+  <a href="tel:6944020119" class="float-call" data-i18n="callNow">📞 Κάλεσε Τώρα</a>
+
+  <!-- VIDEO MODAL -->
+  <div class="modal" id="videoModal" aria-hidden="true">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Κλείσιμο">×</button>
+      <video id="modalVideo" controls playsinline></video>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT: menu, γλώσσα, animations και video modal -->
+  <script>
+    // Μεταφράσεις GR / EN
+    const translations = {
+      el: {
+        navServices:'Υπηρεσίες', navGallery:'Gallery', navLocations:'Καταστήματα', navReviews:'Κριτικές', navSocial:'Social', navContact:'Επικοινωνία',
+        heroEyebrow:'Premium Hair Experience', heroText:'Το στυλ που σου ταιριάζει. Ανδρικές και γυναικείες περιποιήσεις, σύγχρονο χρώμα, premium τεχνικές και προσωπική φροντίδα σε 3 καταστήματα στη Λέσβο.', bookBtn:'Κλείσε Ραντεβού', galleryBtn:'Δες Gallery',
+        servicesTitle:'Περιποιήσεις με premium χαρακτήρα', servicesText:'Βρες την περιποίηση που σου ταιριάζει', menCare:'Περιποιήσεις Ανδρών', womenCare:'Περιποιήσεις Γυναικών',
+        men1:'✂️ Ανδρικό Κούρεμα', men2:'🧔 Περιποίηση Γενειάδας', men3:'🖤 Black Mask', men4:'👦 Παιδικό Κούρεμα', men5:'⚡ Hair Design / Σχέδια',
+        women1:'💇‍♀️ Γυναικείο Κούρεμα', women2:'🎨 Βαφές', women3:'✨ Permanent', women4:'🌟 Balayage', women5:'💁 Extensions', women11:'💍 Extensions Ring', women12:'🔗 Nano Ring Extensions', women13:'🪡 Τρέσες', women6:'🧪 Θεραπεία Olaplex', women7:'💎 Κερατίνες', women8:'💁‍♀️ Braids', women9:'👰 Χτένισμα Γάμου', women14:'💃 Χτενίσματα Κοινωνικών Εκδηλώσεων', women10:'👁️ Βγάλσιμο / Σχηματισμός Φρυδιών',
+        aboutTitle:'Ο Νίκος <span>Τρακέλλης</span>', aboutText:'Η κομμωτική είναι κάτι περισσότερο από ένα κούρεμα. Είναι ο τρόπος που παρουσιάζεις τον εαυτό σου κάθε μέρα. Στο Trakelles Hair, κάθε υπηρεσία προσαρμόζεται στο πρόσωπο, το στυλ και τις ανάγκες του κάθε πελάτη.', teamTitle:'Οι άνθρωποι πίσω από το στυλ σου', teamText:'Η ομάδα του Trakelles Hair συνδυάζει τεχνική, εμπειρία και προσωπική φροντίδα, ώστε κάθε αποτέλεσμα να ταιριάζει πραγματικά στον άνθρωπο που το φοράει.', nikosTitle:'Νίκος <span>Τρακέλλης</span>', nikosText:'Η κομμωτική είναι κάτι περισσότερο από ένα κούρεμα. Είναι ο τρόπος που παρουσιάζεις τον εαυτό σου κάθε μέρα. Στο Trakelles Hair, κάθε υπηρεσία προσαρμόζεται στο πρόσωπο, το στυλ και τις ανάγκες του κάθε πελάτη.', annaTitle:'Άννα <span>Μαμουλλελή</span>', annaText:'Η Άννα Μαμουλλελή αποτελεί μέλος της ομάδας του Trakelles Hair, προσφέροντας υπηρεσίες με συνέπεια, δημιουργικότητα και ιδιαίτερη προσοχή στη λεπτομέρεια. Με σύγχρονες τεχνικές και προσωπική προσέγγιση, στόχος της είναι κάθε πελάτης να φεύγει με ένα αποτέλεσμα που αναδεικνύει το προσωπικό του στυλ και χαρίζει αυτοπεποίθηση.', ratingSmall:'Google Rating', reviewsSmall:'Κριτικές', locationsSmall:'Καταστήματα στη Λέσβο',
+        galleryText:'Δες κάτι απο τη δουλεία μας', locationsTitle:'Τα καταστήματά μας', locationsText:'Το Trakelles Hair εξυπηρετεί σε τρία σημεία στη Λέσβο.', reviewsTitle:'Τι λένε οι πελάτες',
+        review1:'«ΦΟΒΕΡΟΣ και λίγα λέω, επαγγελματίας με τα όλα του. Έχω μείνει ικανοποιημένη φουλ.»', review2:'«Ο άνθρωπος είναι επαγγελματίας και γρήγορος. Έχει άποψη και γνώση στον τομέα του.»', review3:'«Καταπληκτική δουλειά. Ήμουν πολύ ευχαριστημένη και δεν μου έφυγε καθόλου μήκος.»',
+        socialTitle:'Μην χάσεις συμβουλές & νέες δουλειές', socialText:'Ακολούθησε το Trakelles Hair για συμβουλές περιποίησης, νέες τάσεις, πριν/μετά αποτελέσματα και στιγμές από τα καταστήματα.', instaText:'Συμβουλές περιποίησης, χρώματα, transformations και νέα looks από το salon.', tiktokText:'Μην χάσεις γρήγορα tips, πριν/μετά, fades, hair designs και backstage στιγμές.', facebookText:'Νέα, ανακοινώσεις, συμβουλές και επικοινωνία με την ομάδα του Trakelles Hair.', viewInstagram:'View Instagram', viewTikTok:'View TikTok', viewFacebook:'View Facebook',
+        contactTitle:'Κλείσε το ραντεβού σου', contactText:'Το ραντεβού γίνεται τηλεφωνικά. Κάλεσε για διαθεσιμότητα και πληροφορίες.', callNow:'📞 Κάλεσε Τώρα'
+      },
+      en: {
+        navServices:'Services', navGallery:'Gallery', navLocations:'Locations', navReviews:'Reviews', navSocial:'Social', navContact:'Contact',
+        heroEyebrow:'Premium Hair Experience', heroText:'The style that fits you. Men’s and women’s hair services, modern color, premium techniques and personal care across 3 locations in Lesvos.', bookBtn:'Book Appointment', galleryBtn:'View Gallery',
+        servicesTitle:'Premium grooming & hair services', servicesText:'Find the service that fits you.', menCare:'Men’s Care', womenCare:'Women’s Care',
+        men1:'✂️ Men’s Haircut', men2:'🧔 Beard Grooming', men3:'🖤 Black Mask', men4:'👦 Kids Haircut', men5:'⚡ Hair Design',
+        women1:'💇‍♀️ Women’s Haircut', women2:'🎨 Hair Color', women3:'✨ Perm', women4:'🌟 Balayage', women5:'💁 Extensions', women11:'💍 Ring Extensions', women12:'🔗 Nano Ring Extensions', women13:'🪡 Wefts', women6:'🧪 Olaplex Treatment', women7:'💎 Keratin Treatments', women8:'💁‍♀️ Braids', women9:'👰 Bridal Hairstyling', women14:'💃 Social Event Hairstyling', women10:'👁️ Eyebrow Shaping',
+        aboutTitle:'Meet <span>Nikos</span>', aboutText:'Hairdressing is more than a haircut. It is how you present yourself every day. At Trakelles Hair, every service is tailored to each client’s face, style and needs.', teamTitle:'The people behind your style', teamText:'The Trakelles Hair team combines technique, experience and personal care, so every result truly fits the person who wears it.', nikosTitle:'Nikos <span>Trakelles</span>', nikosText:'Hairdressing is more than a haircut. It is how you present yourself every day. At Trakelles Hair, every service is tailored to each client’s face, style and needs.', annaTitle:'Anna <span>Mamouleli</span>', annaText:'Anna Mamouleli is part of the Trakelles Hair team, offering services with consistency, creativity and attention to detail. With modern techniques and a personal approach, her goal is for every client to leave with a result that highlights their personal style and confidence.', ratingSmall:'Google Rating', reviewsSmall:'Reviews', locationsSmall:'Locations in Lesvos',
+        galleryText:'The best transformations in vertical TikTok/Reels-style videos. They play only when requested, keeping the website fast on mobile.', locationsTitle:'Our locations', locationsText:'Trakelles Hair welcomes clients across three locations in Lesvos.', reviewsTitle:'What clients say',
+        review1:'“Amazing professional service. I was fully satisfied.”', review2:'“Professional, fast, with opinion and knowledge in his field.”', review3:'“Excellent work. I was very satisfied and kept my length.”',
+        socialTitle:'Don’t miss tips & new work', socialText:'Follow Trakelles Hair for hair care tips, new trends, before/after results and moments from the salons.', instaText:'Hair care tips, color work, transformations and new looks from the salon.', tiktokText:'Quick tips, before/after videos, fades, hair designs and backstage moments.', facebookText:'Updates, announcements, tips and contact with the Trakelles Hair team.', viewInstagram:'View Instagram', viewTikTok:'View TikTok', viewFacebook:'View Facebook',
+        contactTitle:'Book your appointment', contactText:'Appointments are booked by phone. Call for availability and information.', callNow:'📞 Call Now'
+      }
+    };
+
+    const menu = document.querySelector('.links');
+    const hamb = document.querySelector('.hamb');
+    const nav = document.querySelector('.nav');
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const modal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    const modalClose = document.getElementById('modalClose');
+
+    // Mobile hamburger menu
+    hamb.addEventListener('click', () => {
+      menu.classList.toggle('open');
+      document.body.classList.toggle('no-scroll');
+      hamb.textContent = menu.classList.contains('open') ? '×' : '☰';
+    });
+
+    document.querySelectorAll('.links a').forEach(a => {
+      a.addEventListener('click', () => {
+        menu.classList.remove('open');
+        document.body.classList.remove('no-scroll');
+        hamb.textContent = '☰';
+      });
+    });
+
+    // Navbar effect στο scroll
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Reveal animations κατά το scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){ entry.target.classList.add('active'); }
+      });
+    }, { threshold:.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Αλλαγή γλώσσας με JavaScript
+    function setLanguage(lang){
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if(translations[lang][key]) el.innerHTML = translations[lang][key];
+      });
+      langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.setLang === lang));
+      localStorage.setItem('trakellesLang', lang);
+    }
+
+    langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.setLang)));
+    setLanguage(localStorage.getItem('trakellesLang') || 'el');
+
+    // Video gallery: preview στο hover και modal στο click
+    const videoCards = document.querySelectorAll('.video-card');
+
+    function pauseAllPreviewVideos(exceptVideo = null){
+      videoCards.forEach(card => {
+        const video = card.querySelector('video');
+        if(video && video !== exceptVideo){
+          video.pause();
+          video.currentTime = 0;
+        }
+      });
+    }
+
+    videoCards.forEach(card => {
+      const preview = card.querySelector('video');
+
+      card.addEventListener('mouseenter', () => {
+        if(window.matchMedia('(hover:hover)').matches){
+          pauseAllPreviewVideos(preview);
+          preview.currentTime = 0;
+          preview.play().catch(() => {});
+        }
+      });
+
+      card.addEventListener('mouseleave', () => {
+        preview.pause();
+        preview.currentTime = 0;
+      });
+
+      card.addEventListener('click', () => {
+        pauseAllPreviewVideos();
+        modal.classList.add('open');
+        document.body.classList.add('no-scroll');
+        modal.setAttribute('aria-hidden','false');
+        modalVideo.src = card.dataset.video;
+        modalVideo.play().catch(() => {});
+      });
+    });
+
+    function closeModal(){
+      modal.classList.remove('open');
+      document.body.classList.remove('no-scroll');
+      modal.setAttribute('aria-hidden','true');
+      modalVideo.pause();
+      modalVideo.removeAttribute('src');
+      modalVideo.load();
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+  </script>
+</body>
+</html>
